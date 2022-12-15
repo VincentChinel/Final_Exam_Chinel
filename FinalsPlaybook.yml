@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Update Repo Index (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: Update Repo Index (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: Monitoring
+  become: true
+  roles:
+    - Monitoring
+
+- hosts: Enterprise
+  become: true
+  roles:
+    - Enterprise
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Banner MOTD
+    debug:
+      msg: "Ansible Managed By Chinel"
